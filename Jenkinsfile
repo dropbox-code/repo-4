@@ -7,11 +7,11 @@ node("docker-build"){
         withDockerContainer(image: 'registry.internal.logz.io:5000/re-helm-pusher:1.0.3') {
             String[] chartsNames = sh(returnStdout: true, script: "ls charts/").split()
             chartsNames.each{
-                print "Push Chart ${it.trim()} with version ${chartVersion}"
+                print "Push Chart ${it.trim()} "
                 try {
                     sh "helm cm-push charts/${it.trim()} logzio-chartmuseum"
                 } catch (err) {
-                    print "Failed to push chart ${it.trim()} with version ${chartVersion}"
+                    print "Failed to push chart ${it.trim()}"
                     print err
                 }
             }
