@@ -10,7 +10,7 @@ node("docker-build"){
                 print "Push Chart ${it.trim()} "
                 try {
                     sh "helm dep update charts/${it.trim()}"
-                    sh "helm cm-push charts/${it.trim()} logzio-chartmuseum -f "
+                    sh "helm cm-push charts/${it.trim()} logzio-chartmuseum "
                 } catch (err) {
                     print "Failed to push chart ${it.trim()}"
                     print err
