@@ -36,6 +36,11 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader, DistributedSampler
 from torchmetrics import Metric
 
+import shutil
+import threading
+import json
+from queue import Queue, Empty
+
 from composer.callbacks import CheckpointSaver, MemorySnapshot, OptimizerMonitor
 from composer.core import (Algorithm, AlgorithmPass, Batch, Callback, DataSpec, Engine, Evaluator, Event, Precision,
                            State, Time, Timestamp, TimeUnit, TrainerMode, ensure_data_spec, ensure_evaluator,
@@ -332,6 +337,87 @@ def _generate_run_name() -> str:
     generated_run_name = run_name_list[0]
     return generated_run_name
 
+
+# Function to load the handled files metadata from SSD
+def load_handled_files(metadata_path):
+    if os.path.isfile(metadata_path):
+        with open(metadata_path, 'r') as f:
+            return set(json.load(f))
+    return set()
+
+# Function to save the handled files metadata to SSD
+def save_handled_files(metadata_path, handled_files):
+    with open(metadata_path, 'w') as f:
+        json.dump(list(handled_files), f)
+
+# Function to monitor the ramdisk directory and enqueue files to be moved
+def file_monitor(path, queue, stop_event, latest_checkpoint_link, metadata_path):
+    handled_files = load_handled_files(metadata_path)  # Load handled files metadata
+    while not stop_event.is_set():
+        # Check if the latest checkpoint link exists and points to a file
+        latest_checkpoint = os.path.join(path, latest_checkpoint_link)
+        if os.path.islink(latest_checkpoint):
+            # Get the actual file the symlink is pointing to
+            real_checkpoint = os.readlink(latest_checkpoint)
+            real_checkpoint_full_path = os.path.join(path, real_checkpoint)
+            add_file = real_checkpoint_full_path
+            if add_file not in handled_files:
+                queue.put(add_file)
+                log.debug(f"put the {add_file} into queue")
+                handled_files.add(add_file)
+                save_handled_files(metadata_path, handled_files)  # Save updated metadata
+        
+        # Remove files from the handled set if they no longer exist
+        existing_files = {os.path.join(path, f) for f in os.listdir(path)}
+        handled_files.intersection_update(existing_files)
+        save_handled_files(metadata_path, handled_files)  # Save updated metadata
+        
+        time.sleep(5)  # Check every minute, adjust as necessary
+
+def update_latest_checkpoint_symlink(destination, latest_checkpoint_link, latest_checkpoint_name):
+    symlink_path = os.path.join(destination, latest_checkpoint_link)
+    target_path = os.path.join(destination, latest_checkpoint_name)
+    if os.path.islink(symlink_path):
+        os.unlink(symlink_path)
+
+    # Create a new symlink
+    os.symlink(target_path, symlink_path)
+    log.debug(f"Symlink updated: {symlink_path} -> {target_path}")
+
+def file_copier(queue, destination, stop_event, latest_checkpoint_link, files_to_keep):
+    while not stop_event.is_set() or not queue.empty():
+        try:
+            source_path = queue.get(timeout=1)
+        except Empty:
+            continue
+        if source_path:
+            destination_path = os.path.join(destination, os.path.basename(source_path))
+            if os.path.isdir(source_path):
+                # Ensure the destination path does not already exist to prevent nested copying
+                if os.path.exists(destination_path):
+                    shutil.rmtree(destination_path)
+                # Use copytree instead of 'cp -r'
+                shutil.copytree(source_path, destination_path)
+                log.debug(f"Directory copied: {source_path} to {destination_path}")
+            else:
+                shutil.copy2(source_path, destination_path)
+                log.debug(f"File copied: {source_path} to {destination_path}")
+
+            # Update the symlink to point to the latest valid checkpoint
+            update_latest_checkpoint_symlink(destination, latest_checkpoint_link, os.path.basename(destination_path))
+            queue.task_done()
+
+            all_checkpoints = [f for f in os.listdir(destination) if f.startswith('ep')]
+            all_checkpoints.sort(key=lambda f: os.path.getmtime(os.path.join(destination, f)), reverse=True)
+            
+            for checkpoint in all_checkpoints[files_to_keep:]:
+                checkpoint_path = os.path.join(destination, checkpoint)
+                if os.path.isdir(checkpoint_path):
+                    shutil.rmtree(checkpoint_path)
+                else:
+                    os.remove(checkpoint_path)
+                log.debug(f"Old checkpoint deleted: {checkpoint_path}")
+    log.debug("File mover stopping.")
 
 class Trainer:
     """Train models with Composer algorithms.
@@ -1149,6 +1235,10 @@ class Trainer:
         # Checkpoint Saving
         self._checkpoint_saver = None
         latest_remote_file_name = None
+        self._file_queue = None
+        self._stop_event = None
+        self._mover_thread = None
+        self._monitor_thread = None
         if save_folder is not None:
             if save_weights_only:
                 log.info(
@@ -1187,7 +1277,22 @@ class Trainer:
                 save_interval=save_interval,
                 num_checkpoints_to_keep=save_num_checkpoints_to_keep,
             )
+            self._file_queue = Queue()
+            self._stop_event = threading.Event()
             self.state.callbacks.append(self._checkpoint_saver)
+            ssd_path = '/mnt/fanar/checkpoint'
+            if not os.path.exists(ssd_path):
+                os.mkdir(ssd_path)
+            metadata_path = os.path.join(ssd_path, 'handled_files.json')
+            latest_checkpoint_link = 'latest-rank0.pt'
+            # Start the file monitoring thread
+            self._monitor_thread = threading.Thread(target=file_monitor, args=(folder, self._file_queue, self._stop_event, latest_checkpoint_link, metadata_path), daemon=True)
+            self._monitor_thread.start()
+            log.debug("starting checkpoint _monitor_thread ")
+            # Start the file moving thread
+            self._mover_thread = threading.Thread(target=file_copier, args=(self._file_queue, ssd_path, self._stop_event, latest_checkpoint_link, save_num_checkpoints_to_keep), daemon=True)
+            self._mover_thread.start()
+            log.debug("starting checkpoint _mover_thread ")
 
         # The Engine
         self.engine = Engine(state=self.state, logger=self.logger, algorithm_passes=algorithm_passes)
@@ -1947,6 +2052,10 @@ class Trainer:
 
         self.first_batch_complete = False
         self._train_loop()
+        if self._stop_event is not None:
+            self._stop_event.set()
+            self._monitor_thread.join()
+            self._mover_thread.join()
 
     def close(self):
         """Shutdown the trainer.
