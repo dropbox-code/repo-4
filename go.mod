@@ -225,7 +225,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.16.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.18.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.21.5 // indirect
-	github.com/aws/smithy-go v1.19.0 // indirect
+	github.com/aws/smithy-go v1.19.0
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
@@ -398,9 +398,9 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cfs v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.694
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1019
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1019
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/es v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/mongodb v1.0.392
