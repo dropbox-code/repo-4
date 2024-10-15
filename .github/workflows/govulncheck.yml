@@ -258,7 +258,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.GOVULNCHECK_BOT_TOKEN }}
       if: failure() && github.event_name == 'schedule'
       name: Post to slack
-      uses: slackapi/slack-github-action@v1.24.0
+      uses: slackapi/slack-github-action@v1.27.0
       with:
         channel-id: C05PXRM304B
         payload: "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"\
