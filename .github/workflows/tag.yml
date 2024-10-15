@@ -252,7 +252,7 @@ jobs:
     - continue-on-error: true
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - continue-on-error: true
-      uses: fregante/setup-git-user@v1
+      uses: fregante/setup-git-user@v2
     - continue-on-error: true
       name: tag
       uses: jenkins-x-plugins/jx-release-version@v2.7.3
