@@ -777,7 +777,7 @@ jobs:
       uses: actions/checkout@v4
     - continue-on-error: true
       name: Restore Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         key: ${{ github.job }}-${{ runner.os }}-${{ matrix.goos }}-${{ matrix.goarch
           }}-go-2-${{ hashFiles('**/go.sum') }}-${{ github.run_id }}
@@ -1089,7 +1089,7 @@ jobs:
       uses: actions/checkout@v4
     - continue-on-error: true
       name: Restore Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         key: ${{ github.job }}-${{ runner.os }}-${{ matrix.goos }}-${{ matrix.goarch
           }}-go-2-${{ hashFiles('**/go.sum') }}-${{ github.run_id }}
@@ -4538,7 +4538,7 @@ jobs:
       uses: actions/checkout@v4
     - continue-on-error: true
       name: Restore Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         key: ${{ github.job }}-${{ runner.os }}-${{ matrix.goarch }}-${{ matrix.buildflags
           }}-go-2-${{ hashFiles('**/go.sum') }}-${{ github.run_id }}
@@ -4889,7 +4889,7 @@ jobs:
       uses: actions/checkout@v4
     - continue-on-error: true
       name: Restore Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         key: ${{ github.job }}-${{ runner.os }}-go-2-${{ hashFiles('**/go.sum') }}-${{
           github.run_id }}
