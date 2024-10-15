@@ -255,7 +255,7 @@ jobs:
       uses: fregante/setup-git-user@v1
     - continue-on-error: true
       name: tag
-      uses: jenkins-x-plugins/jx-release-version@v2.7.3
+      uses: jenkins-x-plugins/jx-release-version@v2.7.6
       with:
         github-token: ${{ secrets.DM_BOT_TOKEN }}
         tag: true
