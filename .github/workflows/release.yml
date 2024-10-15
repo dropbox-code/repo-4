@@ -849,7 +849,7 @@ jobs:
         path: builds
     - continue-on-error: true
       name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         body_path: ./builds/containerd-release-notes/release-notes.md
         draft: false
