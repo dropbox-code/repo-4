@@ -18,7 +18,7 @@ require (
 	go.opentelemetry.io/otel/trace v0.20.0
 	go.opentelemetry.io/proto/otlp v0.7.0
 	google.golang.org/grpc v1.37.0
-	google.golang.org/protobuf v1.26.0
+	google.golang.org/protobuf v1.35.1
 )
 
 replace go.opentelemetry.io/otel/bridge/opencensus => ../../bridge/opencensus
