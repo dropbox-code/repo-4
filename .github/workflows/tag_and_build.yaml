@@ -506,7 +506,7 @@ jobs:
     - continue-on-error: true
       uses: actions/setup-python@v2
     - continue-on-error: true
-      uses: pre-commit/action@v2.0.3
+      uses: pre-commit/action@v3.0.1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: after
