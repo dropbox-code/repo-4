@@ -8,17 +8,17 @@ replace (
 )
 
 require (
-	github.com/google/go-cmp v0.5.5
-	github.com/stretchr/testify v1.7.0
-	go.opentelemetry.io/otel v0.20.0
-	go.opentelemetry.io/otel/metric v0.20.0
-	go.opentelemetry.io/otel/sdk v0.20.0
+	github.com/google/go-cmp v0.6.0
+	github.com/stretchr/testify v1.8.4
+	go.opentelemetry.io/otel v1.24.0
+	go.opentelemetry.io/otel/metric v1.24.0
+	go.opentelemetry.io/otel/sdk v1.22.0
 	go.opentelemetry.io/otel/sdk/export/metric v0.20.0
 	go.opentelemetry.io/otel/sdk/metric v0.20.0
-	go.opentelemetry.io/otel/trace v0.20.0
-	go.opentelemetry.io/proto/otlp v0.7.0
-	google.golang.org/grpc v1.37.0
-	google.golang.org/protobuf v1.26.0
+	go.opentelemetry.io/otel/trace v1.24.0
+	go.opentelemetry.io/proto/otlp v1.3.1
+	google.golang.org/grpc v1.64.0
+	google.golang.org/protobuf v1.34.1
 )
 
 replace go.opentelemetry.io/otel/bridge/opencensus => ../../bridge/opencensus
