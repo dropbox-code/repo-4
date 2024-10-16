@@ -10,7 +10,7 @@ repository   = "https://github.com/informalsystems/chainpulse"
 lto = 'thin'
 
 [dependencies]
-axum               = "0.6"
+axum               = "0.7"
 clap               = { version = "4.4", features = ["derive"] }
 ctrlc              = { version = "3.4", features = ["termination"] }
 futures            = "0.3"
