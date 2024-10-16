@@ -1593,7 +1593,7 @@ jobs:
     - continue-on-error: true
       uses: xt0rted/markdownlint-problem-matcher@v2
     - continue-on-error: true
-      uses: DavidAnson/markdownlint-cli2-action@v15
+      uses: DavidAnson/markdownlint-cli2-action@v17
       with:
         globs: '**/*.md'
     - continue-on-error: true
