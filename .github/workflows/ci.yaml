@@ -1057,7 +1057,7 @@ jobs:
     - continue-on-error: true
       uses: dtolnay/rust-toolchain@stable
     - continue-on-error: true
-      uses: EmbarkStudios/cargo-deny-action@v1
+      uses: EmbarkStudios/cargo-deny-action@v2
       with:
         command: check ${{ matrix.checks }}
     - name: after
