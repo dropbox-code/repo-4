@@ -252,7 +252,7 @@ jobs:
       with:
         go-version-file: go.mod
     - continue-on-error: true
-      uses: zendesk/setup-jsonnet@v11
+      uses: zendesk/setup-jsonnet@v12
     - continue-on-error: true
       run: go install github.com/brancz/gojsontoyaml@latest
     - continue-on-error: true
