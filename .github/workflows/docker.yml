@@ -270,7 +270,7 @@ jobs:
         tags: easysoft/nexus3:3.67.0-20240409
     - continue-on-error: true
       name: Update repo description
-      uses: peter-evans/dockerhub-description@v3
+      uses: peter-evans/dockerhub-description@v4
       with:
         password: ${{ secrets.DOCKER_PASS }}
         repository: easysoft/nexus3
