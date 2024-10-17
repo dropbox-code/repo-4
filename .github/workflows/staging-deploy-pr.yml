@@ -264,7 +264,7 @@ jobs:
         PR_NUMBER: ${{ needs.pr-metadata.outputs.number }}
       id: check-pr
       name: Check pull request state
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "const { owner, repo } = context.repo\nconst { data: pullRequest }\
           \ = await github.pulls.get({\n  owner,\n  repo,\n  pull_number: process.env.PR_NUMBER\n\
@@ -526,7 +526,7 @@ jobs:
         PR_NUMBER: ${{ needs.pr-metadata.outputs.number }}
       id: check-pr
       name: Check pull request state
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "// Equivalent of the 'await-sleep' module without the install\nconst\
           \ sleep = ms => new Promise(resolve => setTimeout(resolve, ms))\n\nconst\
@@ -1324,7 +1324,7 @@ jobs:
         BUILD_ACTIONS_RUN_ID: ${{ env.BUILD_ACTIONS_RUN_ID }}
       id: check-workflow-run
       name: Verify build workflow run was not cancelled
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "const { owner, repo } = context.repo\nconst { data: { jobs: buildJobs\
           \ } } = await github.actions.listJobsForWorkflowRun({\n  owner,\n  repo,\n\
@@ -1602,7 +1602,7 @@ jobs:
         BUILD_ACTIONS_RUN_ID: ${{ env.BUILD_ACTIONS_RUN_ID }}
       id: pr
       name: Find the originating pull request
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "// In order to find out the PR info for a forked repo, we must query\n\
           // the API for more info based on the originating workflow run\nconst {\

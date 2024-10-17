@@ -300,7 +300,7 @@ jobs:
         HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
       id: build-source
       name: Create a Heroku build source
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "const { owner, repo } = context.repo\n\nif (owner !== 'github') {\n\
           \  throw new Error(`Repository owner must be 'github' but was: ${owner}`)\n\
@@ -334,7 +334,7 @@ jobs:
         SOURCE_BLOB_URL: ${{ steps.build-source.outputs.download_url }}
       id: deploy
       name: Deploy
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "const {\n  GITHUB_TOKEN,\n  HEROKU_API_TOKEN,\n  HEROKU_PRODUCTION_APP_NAME,\n\
           \  SOURCE_BLOB_URL,\n  DELAY_FOR_PREBOOT\n} = process.env\n\n// Exit if\
@@ -362,7 +362,7 @@ jobs:
         LOG_URL: ${{ steps.deploy.outputs.logUrl }}
       if: ${{ steps.deploy.outcome == 'cancelled' }}
       name: Mark the deployment as inactive if timed out
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "const { DEPLOYMENT_ID, LOG_URL }  = process.env\nconst { owner, repo\
           \ } = context.repo\n\nif (!DEPLOYMENT_ID) {\n  throw new Error('A deployment\
@@ -381,7 +381,7 @@ jobs:
         FASTLY_SURROGATE_KEY: all-the-things
         FASTLY_TOKEN: ${{ secrets.FASTLY_TOKEN }}
       name: Purge Fastly edge cache
-      uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      uses: actions/github-script@660ec11d825b714d112a6bb9727086bc2cc500b2
       with:
         script: "// Workaround to allow us to load ESM files with `require(...)`\n\
           const esm = require('esm')\nrequire = esm({})\n\nconst { default: purgeEdgeCache\
